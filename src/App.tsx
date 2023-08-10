@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import './App.css';
-import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
+import {
+  AuthenticationDetails,
+  CognitoUser,
+  CognitoUserPool,
+} from 'amazon-cognito-identity-js';
 import { config } from './aws_config';
 function App() {
-  console.log({ config });
   const [userInfos, setUserInfos] = useState({
     email: '',
     password: '',
@@ -35,6 +38,7 @@ function App() {
           console.log(err);
         } else if (data) {
           console.log('data:', data);
+          localStorage.setItem('userData', JSON.stringify(data));
           setIsVerificationCode(true);
         }
       }
@@ -67,8 +71,36 @@ function App() {
     handleConfirmation(userInfos.email, userInfos.verificationCode);
   };
 
+  const handleLogin = (event: React.MouseEvent<HTMLElement>) => {
+    const authenticationData = {
+      Username: 'musayuxel@gmail.com',
+      Password: '123123123',
+    };
+
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
+
+    const cognitoUser = new CognitoUser({
+      Username: 'musayuxel@gmail.com',
+      Pool: new CognitoUserPool({
+        UserPoolId: config.userPoolId,
+        ClientId: config.userPoolWebClientId,
+      }),
+    });
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: function (result) {
+        var accessToken = result.getAccessToken().getJwtToken();
+        console.log({ accessToken });
+      },
+
+      onFailure: function (err) {
+        alert(err);
+      },
+    });
+  };
+
   return (
     <div className="App">
+      <button onClick={handleLogin}>LOGIN</button>
       {!isVerificationCode ? (
         <form onSubmit={handleSubmit}>
           <input
