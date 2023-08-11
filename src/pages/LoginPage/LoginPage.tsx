@@ -1,16 +1,15 @@
 import { useState, type FC } from 'react';
-import {
-  AuthenticationDetails,
-  CognitoUser,
-  CognitoUserPool,
-} from 'amazon-cognito-identity-js';
+import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
+import { useSessionStorage } from '../../hooks';
 
 export const LoginPage: FC = () => {
   const [userInfos, setUserInfos] = useState({
     email: '',
     password: '',
   });
+
+  const [, setToken] = useSessionStorage({ key: 'token', initialValue: '' });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfos((prev) => ({
@@ -42,6 +41,7 @@ export const LoginPage: FC = () => {
       onSuccess: (result) => {
         const accessToken = result.getAccessToken().getJwtToken();
         console.log({ accessToken });
+        setToken(accessToken);
       },
       onFailure: (err) => {
         console.error('Authentication failed:', err);
