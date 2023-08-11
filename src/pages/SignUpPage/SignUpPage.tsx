@@ -25,27 +25,16 @@ export const SignUpPage: FC = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    userPool.signUp(
-      userInfos.email,
-      userInfos.password,
-      [],
-      [],
-      (err, data) => {
-        if (err) {
-          console.log(err);
-        } else if (data) {
-          console.log('data:', data);
-          localStorage.setItem('userData', JSON.stringify(data));
-          setShowVerificationForm(true);
-        }
+    userPool.signUp(userInfos.email, userInfos.password, [], [], (err, data) => {
+      if (err) {
+        console.log(err);
+      } else if (data) {
+        setShowVerificationForm(true);
       }
-    );
+    });
   };
 
-  const handleConfirmation = (
-    email: string,
-    confirmationCode: string
-  ): void => {
+  const handleConfirmation = (email: string, confirmationCode: string): void => {
     const cognitoUser = new CognitoUser({
       Username: email,
       Pool: userPool,
