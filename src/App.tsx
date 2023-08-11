@@ -1,8 +1,8 @@
 import { type FC } from 'react';
-
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { HomePage, LoginPage, SignUpPage } from './pages';
 import { NavMenu } from './components/NavMenu';
+import './App.css';
 
 const App: FC = () => {
   return (
