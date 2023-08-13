@@ -1,14 +1,20 @@
 import { useState, type FC } from 'react';
 import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
+import { useNavigate } from 'react-router-dom';
 
 export const SignUpPage: FC = () => {
   const [userInfos, setUserInfos] = useState({
     email: '',
     password: '',
     verificationCode: '',
+    cognitoUserName: '',
+    fistName: '',
+    lastName: '',
   });
   const [showVerificationForm, setShowVerificationForm] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfos((prev) => ({
@@ -29,6 +35,11 @@ export const SignUpPage: FC = () => {
       if (err) {
         console.log(err);
       } else if (data) {
+        console.log({ data });
+        setUserInfos((prev) => ({
+          ...prev,
+          cognitoUserName: data.user.getUsername(),
+        }));
         setShowVerificationForm(true);
       }
     });
@@ -43,8 +54,45 @@ export const SignUpPage: FC = () => {
     cognitoUser.confirmRegistration(confirmationCode, true, (err, result) => {
       if (err) {
         console.error(err);
-      } else {
+      } else if (result === 'SUCCESS') {
         console.log('confirmed:', result);
+
+        fetch('http://localhost:3000/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userEmail: userInfos.email,
+            userName: userInfos.cognitoUserName,
+            firstName: userInfos.fistName,
+            lastName: userInfos.lastName,
+          }),
+        })
+          .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+              navigate('/login');
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    });
+  };
+
+  const resendConfirmationCode = (): void => {
+    const cognitoUser = new CognitoUser({
+      Username: userInfos.email,
+      Pool: userPool,
+    });
+
+    cognitoUser.resendConfirmationCode((err, result) => {
+      if (err) {
+        console.error(err);
+      } else if (result === 'SUCCESS') {
+        console.log('code resent');
       }
     });
   };
@@ -85,7 +133,23 @@ export const SignUpPage: FC = () => {
             name="verificationCode"
             type="text"
           />
+          <input
+            onChange={handleChange}
+            value={userInfos.fistName}
+            placeholder="first name"
+            name="fistName"
+            type="text"
+          />
+          <input
+            onChange={handleChange}
+            value={userInfos.lastName}
+            placeholder="last name"
+            name="lastName"
+            type="text"
+          />
+
           <input type="submit" />
+          <input type="button" value="Resend code!" onClick={resendConfirmationCode} />
         </form>
       )}
     </div>
