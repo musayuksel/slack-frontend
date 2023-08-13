@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useState, type FC, useEffect } from 'react';
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
 import { useSessionStorage } from '../../hooks';
@@ -10,7 +10,7 @@ export const LoginPage: FC = () => {
     password: '',
   });
 
-  const [, setToken] = useSessionStorage({ key: 'token', initialValue: '' });
+  const [token, setToken] = useSessionStorage({ key: 'token', initialValue: '' });
 
   const navigate = useNavigate();
 
@@ -43,9 +43,7 @@ export const LoginPage: FC = () => {
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (result) => {
         const accessToken = result.getAccessToken().getJwtToken();
-        console.log({ accessToken });
         setToken(accessToken);
-        navigate('/dashboard');
       },
       onFailure: (err) => {
         console.error('Authentication failed:', err);
@@ -53,6 +51,11 @@ export const LoginPage: FC = () => {
       },
     });
   };
+  useEffect(() => {
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [token, navigate]);
 
   return (
     <div>
