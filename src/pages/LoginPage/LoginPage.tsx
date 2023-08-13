@@ -2,6 +2,7 @@ import { useState, type FC } from 'react';
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
 import { useSessionStorage } from '../../hooks';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginPage: FC = () => {
   const [userInfos, setUserInfos] = useState({
@@ -10,6 +11,8 @@ export const LoginPage: FC = () => {
   });
 
   const [, setToken] = useSessionStorage({ key: 'token', initialValue: '' });
+
+  const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfos((prev) => ({
@@ -42,6 +45,7 @@ export const LoginPage: FC = () => {
         const accessToken = result.getAccessToken().getJwtToken();
         console.log({ accessToken });
         setToken(accessToken);
+        navigate('/dashboard');
       },
       onFailure: (err) => {
         console.error('Authentication failed:', err);
