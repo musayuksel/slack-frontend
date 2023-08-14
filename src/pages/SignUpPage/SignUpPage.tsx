@@ -35,7 +35,7 @@ export const SignUpPage: FC = () => {
       } else if (data) {
         setUserInfos((prev) => ({
           ...prev,
-          cognitoUserName: data.user.getUsername(),
+          cognitoUserName: data.userSub,
         }));
         setShowVerificationForm(true);
       }
