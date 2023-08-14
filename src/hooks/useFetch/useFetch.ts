@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FetchResponse, HttpMethod } from './useFetch.interface';
+import { fetchData } from '../../utils';
 
 export const useFetch = (url: string, method: HttpMethod, body: string | null = null): FetchResponse => {
   const [response, setResponse] = useState<FetchResponse>({
@@ -9,26 +10,14 @@ export const useFetch = (url: string, method: HttpMethod, body: string | null = 
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetcher = async () => {
       setResponse((prevResponse) => ({
         ...prevResponse,
         isLoading: true,
       }));
 
-      const token = sessionStorage.getItem('token')?.slice(1, -1); //delete quotes
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      };
-
       try {
-        const requestOptions: RequestInit = {
-          method,
-          headers,
-          body,
-        };
-
-        const res = await fetch(url, requestOptions);
+        const res = await fetchData(url, method, body);
 
         if (res.status === 401) {
           throw new Error('Invalid access token');
@@ -53,7 +42,7 @@ export const useFetch = (url: string, method: HttpMethod, body: string | null = 
       }
     };
 
-    fetchData();
+    fetcher();
   }, [url, method, body]);
 
   return response;
