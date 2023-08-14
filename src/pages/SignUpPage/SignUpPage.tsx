@@ -2,6 +2,7 @@ import { useState, type FC } from 'react';
 import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
 import { useNavigate } from 'react-router-dom';
+import { HttpMethod, fetchData } from '../../utils';
 
 export const SignUpPage: FC = () => {
   const [userInfos, setUserInfos] = useState({
@@ -33,9 +34,8 @@ export const SignUpPage: FC = () => {
 
     userPool.signUp(userInfos.email, userInfos.password, [], [], (err, data) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else if (data) {
-        console.log({ data });
         setUserInfos((prev) => ({
           ...prev,
           cognitoUserName: data.user.getUsername(),
@@ -51,33 +51,29 @@ export const SignUpPage: FC = () => {
       Pool: userPool,
     });
 
-    cognitoUser.confirmRegistration(confirmationCode, true, (err, result) => {
+    cognitoUser.confirmRegistration(confirmationCode, true, async (err, result) => {
       if (err) {
         console.error(err);
       } else if (result === 'SUCCESS') {
-        console.log('confirmed:', result);
+        try {
+          const response = await fetchData(
+            '/users',
+            HttpMethod.POST,
+            JSON.stringify({
+              userEmail: userInfos.email,
+              userName: userInfos.cognitoUserName,
+              firstName: userInfos.fistName,
+              lastName: userInfos.lastName,
+            }),
+          );
+          console.log(response);
 
-        fetch('http://localhost:3000/api/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userEmail: userInfos.email,
-            userName: userInfos.cognitoUserName,
-            firstName: userInfos.fistName,
-            lastName: userInfos.lastName,
-          }),
-        })
-          .then((response) => {
-            console.log(response);
-            if (response.status === 200) {
-              navigate('/login');
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+          if (response.status === 200) {
+            navigate('/login');
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
     });
   };
