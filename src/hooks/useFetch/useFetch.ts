@@ -16,18 +16,20 @@ export const useFetch = (url: string, method: HttpMethod, body: string | null = 
       }));
 
       const token = sessionStorage.getItem('token')?.slice(1, -1); //delete quotes
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
 
       try {
         const requestOptions: RequestInit = {
           method,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: body,
+          headers,
+          body,
         };
 
         const res = await fetch(url, requestOptions);
+
         if (res.status === 401) {
           throw new Error('Invalid access token');
         }
