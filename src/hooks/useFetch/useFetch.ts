@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FetchResponse, HttpMethod } from './useFetch.interface';
 
-export const useFetch = (url: string, method: HttpMethod, body: string | null): FetchResponse => {
+export const useFetch = (url: string, method: HttpMethod, body: string | null = null): FetchResponse => {
   const [response, setResponse] = useState<FetchResponse>({
     data: null,
     error: null,
@@ -24,13 +24,15 @@ export const useFetch = (url: string, method: HttpMethod, body: string | null): 
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: body ? body : undefined,
+          body: body,
         };
 
         const res = await fetch(url, requestOptions);
-
+        if (res.status === 401) {
+          throw new Error('Invalid access token');
+        }
         if (!res.ok) {
-          throw new Error(`HTTP error, status = ${res.status}`);
+          throw new Error(`HTTP error, status = ${res.status} (${res.statusText})`);
         }
 
         const data = await res.json();
@@ -40,10 +42,10 @@ export const useFetch = (url: string, method: HttpMethod, body: string | null): 
           error: null,
           isLoading: false,
         });
-      } catch (error) {
+      } catch (error: any) {
         setResponse({
           data: null,
-          error,
+          error: error.message,
           isLoading: false,
         });
       }
