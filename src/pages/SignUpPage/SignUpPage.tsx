@@ -1,8 +1,7 @@
 import { useState, type FC } from 'react';
-import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
+import { CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
-import { useNavigate } from 'react-router-dom';
-import { HttpMethod, fetchData } from '../../utils';
+import { SignUpForm } from '../../components/SignUpForm';
 
 export const SignUpPage: FC = () => {
   const [userInfos, setUserInfos] = useState({
@@ -14,8 +13,6 @@ export const SignUpPage: FC = () => {
     lastName: '',
   });
   const [showVerificationForm, setShowVerificationForm] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfos((prev) => ({
@@ -45,59 +42,6 @@ export const SignUpPage: FC = () => {
     });
   };
 
-  const handleConfirmation = (email: string, confirmationCode: string): void => {
-    const cognitoUser = new CognitoUser({
-      Username: email,
-      Pool: userPool,
-    });
-
-    cognitoUser.confirmRegistration(confirmationCode, true, async (err, result) => {
-      if (err) {
-        console.error(err);
-      } else if (result === 'SUCCESS') {
-        try {
-          const response = await fetchData(
-            '/users',
-            HttpMethod.POST,
-            JSON.stringify({
-              userEmail: userInfos.email,
-              userName: userInfos.cognitoUserName,
-              firstName: userInfos.fistName,
-              lastName: userInfos.lastName,
-            }),
-          );
-          console.log(response);
-
-          if (response.status === 200) {
-            navigate('/login');
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    });
-  };
-
-  const resendConfirmationCode = (): void => {
-    const cognitoUser = new CognitoUser({
-      Username: userInfos.email,
-      Pool: userPool,
-    });
-
-    cognitoUser.resendConfirmationCode((err, result) => {
-      if (err) {
-        console.error(err);
-      } else if (result === 'SUCCESS') {
-        console.log('code resent');
-      }
-    });
-  };
-
-  const handleVerification = (event: React.FormEvent) => {
-    event.preventDefault();
-    handleConfirmation(userInfos.email, userInfos.verificationCode);
-  };
-
   return (
     <div className="App">
       {!showVerificationForm ? (
@@ -121,32 +65,7 @@ export const SignUpPage: FC = () => {
           <input type="submit" />
         </form>
       ) : (
-        <form onSubmit={handleVerification}>
-          <input
-            onChange={handleChange}
-            value={userInfos.verificationCode}
-            placeholder="verification code"
-            name="verificationCode"
-            type="text"
-          />
-          <input
-            onChange={handleChange}
-            value={userInfos.fistName}
-            placeholder="first name"
-            name="fistName"
-            type="text"
-          />
-          <input
-            onChange={handleChange}
-            value={userInfos.lastName}
-            placeholder="last name"
-            name="lastName"
-            type="text"
-          />
-
-          <input type="submit" />
-          <input type="button" value="Resend code!" onClick={resendConfirmationCode} />
-        </form>
+        <SignUpForm userInfos={userInfos} handleChange={handleChange} />
       )}
     </div>
   );
