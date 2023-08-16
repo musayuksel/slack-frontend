@@ -2,26 +2,28 @@ import { useState, type FC } from 'react';
 import { HttpMethod, fetchData } from '../utils';
 
 export const UploadFile: FC = () => {
-  const [imageUrl, setImageUrl] = useState(undefined as string | undefined);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
-  const [imageFile, setImageFile] = useState({} as File);
+  const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const handleUploadFile = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!imageFile) {
+      return;
+    }
 
     const generateS3SignInUrl = await fetchData(
       '/messages/generateS3SignInUrl',
       HttpMethod.POST,
-      JSON.stringify({ fileName: imageFile.name }),
+      JSON.stringify({ fileName: imageFile?.name }),
     );
     const { signedUrl, fileName } = await generateS3SignInUrl.json();
 
-    console.log({ fileName });
-
     const response = await fetch(signedUrl, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
       body: imageFile,
     });
     console.log({ response });
@@ -29,7 +31,8 @@ export const UploadFile: FC = () => {
   };
 
   const test = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImageFile(event.target.files?.[0] as File);
+    console.log(event.target.files);
+    setImageFile(event.target.files?.[0]);
   };
 
   return (
