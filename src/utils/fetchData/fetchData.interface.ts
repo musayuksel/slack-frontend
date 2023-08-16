@@ -5,3 +5,9 @@ export enum HttpMethod {
   PATCH = 'PATCH',
   DELETE = 'DELETE',
 }
+
+export interface IFetchDataArgs {
+  url: string;
+  method?: HttpMethod;
+  body?: string | null;
+}
