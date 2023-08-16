@@ -34,16 +34,16 @@ export const SignUpForm = ({ userInfos, handleChange }: Props) => {
         console.error(err);
       } else if (result === 'SUCCESS') {
         try {
-          const response = await fetchData(
-            '/users',
-            HttpMethod.POST,
-            JSON.stringify({
+          const response = await fetchData({
+            url: '/users',
+            method: HttpMethod.POST,
+            body: JSON.stringify({
               userEmail: userInfos.email,
               userName: userInfos.cognitoUserName,
               firstName: userInfos.fistName,
               lastName: userInfos.lastName,
             }),
-          );
+          });
           console.log(response);
 
           if (response.status === 200) {

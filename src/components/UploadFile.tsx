@@ -12,18 +12,18 @@ export const UploadFile: FC = () => {
       return;
     }
 
-    const generateS3SignInUrl = await fetchData(
-      '/messages/generateS3SignInUrl',
-      HttpMethod.POST,
-      JSON.stringify({ fileName: imageFile?.name }),
-    );
+    const generateS3SignInUrl = await fetchData({
+      url: '/messages/generateS3SignInUrl',
+      method: HttpMethod.POST,
+      body: JSON.stringify({ fileName: imageFile?.name }),
+    });
     const { signedUrl, fileName } = await generateS3SignInUrl.json();
 
     const response = await fetch(signedUrl, {
       method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
       body: imageFile,
     });
     console.log({ response });

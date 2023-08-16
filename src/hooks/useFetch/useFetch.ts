@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { FetchResponse, HttpMethod } from './useFetch.interface';
-import { fetchData } from '../../utils';
+import { IFetchDataArgs, fetchData } from '../../utils';
 
-export const useFetch = (url: string, method: HttpMethod, body: string | null = null): FetchResponse => {
+export const useFetch = ({ url, method = HttpMethod.GET, body = null }: IFetchDataArgs): FetchResponse => {
   const [response, setResponse] = useState<FetchResponse>({
     data: null,
     error: null,
@@ -17,7 +17,7 @@ export const useFetch = (url: string, method: HttpMethod, body: string | null = 
       }));
 
       try {
-        const res = await fetchData(url, method, body);
+        const res = await fetchData({ url, method, body });
 
         if (res.status === 401) {
           throw new Error('Invalid access token');
