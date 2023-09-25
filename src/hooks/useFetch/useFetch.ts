@@ -19,17 +19,14 @@ export const useFetch = ({ url, method = HttpMethod.GET, body = null }: IFetchDa
       try {
         const res = await fetchData({ url, method, body });
 
-        if (res.status === 401) {
-          throw new Error('Invalid access token');
-        }
-        if (!res.ok) {
-          throw new Error(`HTTP error, status = ${res.status} (${res.statusText})`);
-        }
+        const { success, data, message } = await res.json();
 
-        const data = await res.json();
+        if (!success) {
+          throw new Error(message);
+        }
 
         setResponse({
-          data,
+          data: data,
           error: null,
           isLoading: false,
         });
