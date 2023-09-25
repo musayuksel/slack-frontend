@@ -1,7 +1,7 @@
 import { useState, type FC } from 'react';
 import { CognitoUserPool } from 'amazon-cognito-identity-js';
 import { config } from '../../aws_config';
-import { SignUpForm } from '../../components/SignUpForm';
+import { SignUpForm } from '../../components';
 
 export const SignUpPage: FC = () => {
   const [userInfos, setUserInfos] = useState({

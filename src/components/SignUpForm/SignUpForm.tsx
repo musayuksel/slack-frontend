@@ -1,7 +1,7 @@
 import { CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import { useNavigate } from 'react-router-dom';
-import { HttpMethod, fetchData } from '../utils';
-import { config } from '../aws_config';
+import { HttpMethod, fetchData } from '../../utils';
+import { config } from '../../aws_config';
 
 type Props = {
   userInfos: {

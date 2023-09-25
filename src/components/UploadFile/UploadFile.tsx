@@ -1,5 +1,5 @@
 import { useState, type FC } from 'react';
-import { HttpMethod, fetchData } from '../utils';
+import { HttpMethod, fetchData } from '../../utils';
 
 const getSignInUrl = async (fileName: string) => {
   const response = await fetchData({
@@ -15,6 +15,8 @@ export const UploadFile: FC = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   const [imageFile, setImageFile] = useState<File | undefined>(undefined);
+
+  // console.log({ imageFile });
   const handleUploadFile = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -24,18 +26,26 @@ export const UploadFile: FC = () => {
 
     const { signedUrl, fileName } = await getSignInUrl(imageFile?.name);
 
-    const response = await fetch(signedUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: imageFile,
-    });
+    console.log({ signedUrl, fileName });
+    try {
+      const response = await fetch(signedUrl, {
+        method: 'PUT',
+        // headers: {
+        //   'Content-Type': 'image/png',
+        //   // 'Content-Type': 'application/octet-stream',
+        // },
+        body: imageFile,
+      });
 
-    console.log({ response, fileName });
-    setImageUrl(response.url);
+      if (!response.ok) {
+        throw new Error('File upload failed');
+      }
+
+      setImageUrl(response.url);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
   };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => setImageFile(event.target.files?.[0]);
 
   return (
