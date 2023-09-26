@@ -1,11 +1,10 @@
 import { useState, type FC, useEffect } from 'react';
-import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
-import { config } from '../../aws_config';
 import { useSessionStorage } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
+import { IAuthenticateUserWithCognitoArgs, authenticateUserWithCognito } from '../../utils';
 
 export const LoginPage: FC = () => {
-  const [userInfos, setUserInfos] = useState({
+  const [userInfos, setUserInfos] = useState<IAuthenticateUserWithCognitoArgs>({
     email: '',
     password: '',
   });
@@ -21,36 +20,12 @@ export const LoginPage: FC = () => {
     }));
   };
 
-  const userPool = new CognitoUserPool({
-    UserPoolId: config.userPoolId,
-    ClientId: config.userPoolWebClientId,
-  });
-
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    const authenticationData = {
-      Username: userInfos.email,
-      Password: userInfos.password,
-    };
-
-    const authenticationDetails = new AuthenticationDetails(authenticationData);
-    const cognitoUser = new CognitoUser({
-      Username: userInfos.email,
-      Pool: userPool,
-    });
-
-    cognitoUser.authenticateUser(authenticationDetails, {
-      onSuccess: (result) => {
-        const accessToken = result.getAccessToken().getJwtToken();
-        setToken(accessToken);
-      },
-      onFailure: (err) => {
-        console.error('Authentication failed:', err);
-        //TODO: Handle authentication failure
-      },
-    });
+    authenticateUserWithCognito(userInfos, setToken);
   };
+
   useEffect(() => {
     if (token) {
       navigate('/dashboard');
