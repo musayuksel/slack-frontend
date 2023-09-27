@@ -1,10 +1,9 @@
 import { useState, type FC } from 'react';
-import { CognitoUserPool } from 'amazon-cognito-identity-js';
-import { config } from '../../aws_config';
 import { SignUpForm } from '../../components';
+import { ISignUpUserWithCognitoArgs, signUpUserWithCognito } from '../../utils';
 
 export const SignUpPage: FC = () => {
-  const [userInfos, setUserInfos] = useState({
+  const [userInfos, setUserInfos] = useState<ISignUpUserWithCognitoArgs>({
     email: '',
     password: '',
     verificationCode: '',
@@ -21,25 +20,10 @@ export const SignUpPage: FC = () => {
     }));
   };
 
-  const userPool = new CognitoUserPool({
-    UserPoolId: config.userPoolId,
-    ClientId: config.userPoolWebClientId,
-  });
-
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    userPool.signUp(userInfos.email, userInfos.password, [], [], (err, data) => {
-      if (err) {
-        console.error(err);
-      } else if (data) {
-        setUserInfos((prev) => ({
-          ...prev,
-          cognitoUserName: data.userSub,
-        }));
-        setShowVerificationForm(true);
-      }
-    });
+    signUpUserWithCognito(userInfos, setUserInfos, setShowVerificationForm);
   };
 
   return (
