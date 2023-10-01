@@ -15,11 +15,11 @@ interface IChannelMessages {
 }
 
 export const ChannelMessages: FC<Props> = ({ currentChannel }) => {
-  const { data, isLoading } = useFetch({ url: `/messages/channel/${currentChannel}` });
+  const { data, isLoading } = useFetch<IChannelMessages[]>({ url: `/messages/channel/${currentChannel}` });
 
   console.log({ data, isLoading });
 
-  const messages = data?.map((message: IChannelMessages) => (
+  const messages = data?.map((message) => (
     <li key={message.id}>
       {message.content}- from: {message.userId}
     </li>

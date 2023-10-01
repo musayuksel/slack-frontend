@@ -13,9 +13,9 @@ interface IChannels {
 }
 
 export const Channels: FC<Props> = ({ setCurrentChannel }) => {
-  const { data, isLoading } = useFetch({ url: '/channels/userChannels' });
+  const { data, isLoading } = useFetch<IChannels[]>({ url: '/channels/userChannels' });
 
-  const channels = data?.map((channel: IChannels) => (
+  const channels = data?.map((channel) => (
     <li onClick={() => setCurrentChannel(channel.id)} key={channel.id}>
       {channel.channelName}
     </li>
