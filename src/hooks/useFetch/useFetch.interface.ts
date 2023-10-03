@@ -1,5 +1,5 @@
-export interface FetchResponse {
-  data: any;
+export interface FetchResponse<T> {
+  data: T | null;
   error: any;
   isLoading: boolean;
 }

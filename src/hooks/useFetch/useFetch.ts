@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { FetchResponse, HttpMethod } from './useFetch.interface';
 import { IFetchDataArgs, fetchData } from '../../utils';
 
-export const useFetch = ({ url, method = HttpMethod.GET, body = null }: IFetchDataArgs): FetchResponse => {
-  const [response, setResponse] = useState<FetchResponse>({
+export const useFetch = <T>({ url, method = HttpMethod.GET, body = null }: IFetchDataArgs): FetchResponse<T> => {
+  const [response, setResponse] = useState<FetchResponse<T>>({
     data: null,
     error: null,
     isLoading: false,
