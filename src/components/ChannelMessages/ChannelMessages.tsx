@@ -1,8 +1,9 @@
 import React, { type FC } from 'react';
 import { useFetch } from '../../hooks';
+import { MessageInput } from '../MessageInput';
 
 type Props = {
-  currentChannel: string;
+  currentChannelId: string;
 };
 interface IChannelMessages {
   id: string;
@@ -14,8 +15,8 @@ interface IChannelMessages {
   userId: string;
 }
 
-export const ChannelMessages: FC<Props> = ({ currentChannel }) => {
-  const { data, isLoading } = useFetch<IChannelMessages[]>({ url: `/messages/channel/${currentChannel}` });
+export const ChannelMessages: FC<Props> = ({ currentChannelId }) => {
+  const { data, isLoading } = useFetch<IChannelMessages[]>({ url: `/messages/channel/${currentChannelId}` });
 
   console.log({ data, isLoading });
 
@@ -28,7 +29,9 @@ export const ChannelMessages: FC<Props> = ({ currentChannel }) => {
   return (
     <section>
       {isLoading && <div>LOADING ANIMATION...</div>}
+      <h2>Messages</h2>
       <ul>{messages}</ul>
+      <MessageInput currentChannelId={currentChannelId} />
     </section>
   );
 };

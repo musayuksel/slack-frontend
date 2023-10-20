@@ -2,7 +2,7 @@ import { type FC } from 'react';
 import { useFetch } from '../../hooks';
 
 type Props = {
-  setCurrentChannel: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentChannelId: React.Dispatch<React.SetStateAction<string>>;
 };
 
 interface IChannels {
@@ -12,11 +12,11 @@ interface IChannels {
   updatedAt: Date;
 }
 
-export const Channels: FC<Props> = ({ setCurrentChannel }) => {
+export const Channels: FC<Props> = ({ setCurrentChannelId }) => {
   const { data, isLoading } = useFetch<IChannels[]>({ url: '/channels/userChannels' });
 
   const channels = data?.map((channel) => (
-    <li onClick={() => setCurrentChannel(channel.id)} key={channel.id}>
+    <li onClick={() => setCurrentChannelId(channel.id)} key={channel.id}>
       {channel.channelName}
     </li>
   ));
@@ -24,6 +24,7 @@ export const Channels: FC<Props> = ({ setCurrentChannel }) => {
   return (
     <section>
       {isLoading && <div>LOADING ANIMATION...</div>}
+      <h2>Channels</h2>
       <ul>{channels}</ul>
     </section>
   );
