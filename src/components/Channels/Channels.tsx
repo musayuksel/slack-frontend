@@ -1,19 +1,9 @@
 import { type FC } from 'react';
 import { useFetch } from '../../hooks';
+import { TChannels, TChannelsProps } from './Channels.types';
 
-type Props = {
-  setCurrentChannelId: React.Dispatch<React.SetStateAction<string>>;
-};
-
-interface IChannels {
-  id: string;
-  channelName: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export const Channels: FC<Props> = ({ setCurrentChannelId }) => {
-  const { data, isLoading } = useFetch<IChannels[]>({ url: '/channels/userChannels' });
+export const Channels: FC<TChannelsProps> = ({ setCurrentChannelId }) => {
+  const { data, isLoading } = useFetch<TChannels[]>({ url: '/channels/userChannels' });
 
   const channels = data?.map((channel) => (
     <li onClick={() => setCurrentChannelId(channel.id)} key={channel.id}>
