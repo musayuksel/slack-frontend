@@ -1,5 +1,4 @@
 import React, { useState, type FC } from 'react';
-import { useFetch } from '../../hooks';
 import { HttpMethod, fetchData } from '../../utils';
 
 type Props = {
@@ -18,15 +17,19 @@ export const MessageInput: FC<Props> = ({ currentChannelId }) => {
       channelId: currentChannelId,
       attachment: null,
     };
+    try {
+      const response = await fetchData({
+        url: '/messages',
+        method: HttpMethod.POST,
+        body: JSON.stringify(messagePayload),
+      });
 
-    const response = await fetchData({
-      url: '/messages',
-      method: HttpMethod.POST,
-      body: JSON.stringify(messagePayload),
-    });
-
-    console.log({ response });
-    setMessage('');
+      const newMessage = await response.json(); //TODO: add message to state
+      console.log({ newMessage });
+      setMessage('');
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   return (
