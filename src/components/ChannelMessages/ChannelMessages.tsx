@@ -1,24 +1,10 @@
 import React, { type FC } from 'react';
 import { useFetch } from '../../hooks';
 import { MessageInput } from '../MessageInput';
+import { TChannelMessages, TChannelMessagesProps } from './ChannelMessages.types';
 
-type Props = {
-  currentChannelId: string;
-};
-interface IChannelMessages {
-  id: string;
-  content: string;
-  attachment: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  channelId: string;
-  userId: string;
-}
-
-export const ChannelMessages: FC<Props> = ({ currentChannelId }) => {
-  const { data, isLoading } = useFetch<IChannelMessages[]>({ url: `/messages/channel/${currentChannelId}` });
-
-  console.log({ data, isLoading });
+export const ChannelMessages: FC<TChannelMessagesProps> = ({ currentChannelId }) => {
+  const { data, isLoading } = useFetch<TChannelMessages[]>({ url: `/messages/channel/${currentChannelId}` });
 
   const messages = data?.map((message) => (
     <li key={message.id}>
