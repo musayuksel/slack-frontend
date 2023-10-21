@@ -1,12 +1,9 @@
+import { type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ISignUpUserWithCognitoArgs, confirmUserWithCognito, resendConfirmationCode } from '../../utils';
+import { confirmUserWithCognito, resendConfirmationCode } from '../../utils';
+import { TSignUpFormProps } from './SignUpForm.types';
 
-type Props = {
-  userInfos: ISignUpUserWithCognitoArgs;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
-
-export const SignUpForm = ({ userInfos, handleChange }: Props) => {
+export const SignUpForm: FC<TSignUpFormProps> = ({ userInfos, handleChange }) => {
   const navigate = useNavigate();
 
   const handleVerification = (event: React.FormEvent) => {
