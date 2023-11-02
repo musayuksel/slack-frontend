@@ -2,6 +2,7 @@ import React, { type FC } from 'react';
 import { useFetch } from '../../hooks';
 import { MessageInput } from '../MessageInput';
 import { TChannelMessages, TChannelMessagesProps } from './ChannelMessages.types';
+import styles from './ChannelMessages.module.css';
 
 export const ChannelMessages: FC<TChannelMessagesProps> = ({ currentChannelId }) => {
   const { data, isLoading } = useFetch<TChannelMessages[]>({ url: `/messages/channel/${currentChannelId}` });
@@ -13,10 +14,10 @@ export const ChannelMessages: FC<TChannelMessagesProps> = ({ currentChannelId })
   ));
 
   return (
-    <section>
+    <section className={styles.messagesSection}>
       {isLoading && <div>LOADING ANIMATION...</div>}
       <h2>Messages</h2>
-      <ul>{messages}</ul>
+      <ul className={styles.messagesContainer}>{messages}</ul>
       <MessageInput currentChannelId={currentChannelId} />
     </section>
   );

@@ -1,0 +1,7 @@
+.channelMessageSectionContainer {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  justify-content: center;
+  justify-items: start;
+  align-items: stretch;
+}
