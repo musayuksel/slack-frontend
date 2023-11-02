@@ -1,30 +1,26 @@
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { useFetch } from '../../hooks';
+import { TChannels, TChannelsProps } from './Channels.types';
+import styles from './Channels.module.css';
 
-type Props = {
-  setCurrentChannel: React.Dispatch<React.SetStateAction<string>>;
-};
+export const Channels: FC<TChannelsProps> = ({ setCurrentChannelId }) => {
+  const { data, isLoading } = useFetch<TChannels[]>({ url: '/channels/userChannels' });
 
-interface IChannels {
-  id: string;
-  channelName: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export const Channels: FC<Props> = ({ setCurrentChannel }) => {
-  const { data, isLoading } = useFetch<IChannels[]>({ url: '/channels/userChannels' });
+  useEffect(() => {
+    data && data.length > 0 && setCurrentChannelId(data[0].id);
+  }, [data, setCurrentChannelId]); // Set the first channel as the initial channel
 
   const channels = data?.map((channel) => (
-    <li onClick={() => setCurrentChannel(channel.id)} key={channel.id}>
+    <li onClick={() => setCurrentChannelId(channel.id)} key={channel.id}>
       {channel.channelName}
     </li>
   ));
 
   return (
-    <section>
+    <section className={styles.channelsSection}>
       {isLoading && <div>LOADING ANIMATION...</div>}
-      <ul>{channels}</ul>
+      <h2>Channels</h2>
+      <ul className={styles.channelsContainer}>{channels}</ul>
     </section>
   );
 };

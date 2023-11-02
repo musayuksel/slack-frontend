@@ -1,15 +1,17 @@
 import { useState, type FC } from 'react';
 import { ChannelMessages, Channels } from '../../components';
+import styles from './DashboardPage.module.css';
 
 export const DashboardPage: FC = () => {
-  const [currentChannel, setCurrentChannel] = useState('');
+  const [currentChannelId, setCurrentChannelId] = useState('');
 
-  console.log({ currentChannel });
   return (
-    <div>
+    <>
       <h1>Dashboard</h1>
-      <Channels setCurrentChannel={setCurrentChannel} />
-      <ChannelMessages currentChannel={currentChannel} />
-    </div>
+      <div className={styles.channelMessageSectionContainer}>
+        <Channels setCurrentChannelId={setCurrentChannelId} />
+        <ChannelMessages currentChannelId={currentChannelId} />
+      </div>
+    </>
   );
 };

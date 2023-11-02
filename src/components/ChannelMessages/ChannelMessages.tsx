@@ -1,23 +1,11 @@
 import React, { type FC } from 'react';
 import { useFetch } from '../../hooks';
+import { MessageInput } from '../MessageInput';
+import { TChannelMessages, TChannelMessagesProps } from './ChannelMessages.types';
+import styles from './ChannelMessages.module.css';
 
-type Props = {
-  currentChannel: string;
-};
-interface IChannelMessages {
-  id: string;
-  content: string;
-  attachment: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  channelId: string;
-  userId: string;
-}
-
-export const ChannelMessages: FC<Props> = ({ currentChannel }) => {
-  const { data, isLoading } = useFetch<IChannelMessages[]>({ url: `/messages/channel/${currentChannel}` });
-
-  console.log({ data, isLoading });
+export const ChannelMessages: FC<TChannelMessagesProps> = ({ currentChannelId }) => {
+  const { data, isLoading } = useFetch<TChannelMessages[]>({ url: `/messages/channel/${currentChannelId}` });
 
   const messages = data?.map((message) => (
     <li key={message.id}>
@@ -26,9 +14,11 @@ export const ChannelMessages: FC<Props> = ({ currentChannel }) => {
   ));
 
   return (
-    <section>
+    <section className={styles.messagesSection}>
       {isLoading && <div>LOADING ANIMATION...</div>}
-      <ul>{messages}</ul>
+      <h2>Messages</h2>
+      <ul className={styles.messagesContainer}>{messages}</ul>
+      <MessageInput currentChannelId={currentChannelId} />
     </section>
   );
 };
