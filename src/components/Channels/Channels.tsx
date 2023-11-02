@@ -1,6 +1,7 @@
 import { useEffect, type FC } from 'react';
 import { useFetch } from '../../hooks';
 import { TChannels, TChannelsProps } from './Channels.types';
+import styles from './Channels.module.css';
 
 export const Channels: FC<TChannelsProps> = ({ setCurrentChannelId }) => {
   const { data, isLoading } = useFetch<TChannels[]>({ url: '/channels/userChannels' });
@@ -16,10 +17,10 @@ export const Channels: FC<TChannelsProps> = ({ setCurrentChannelId }) => {
   ));
 
   return (
-    <section>
+    <section className={styles.channelsSection}>
       {isLoading && <div>LOADING ANIMATION...</div>}
       <h2>Channels</h2>
-      <ul>{channels}</ul>
+      <ul className={styles.channelsContainer}>{channels}</ul>
     </section>
   );
 };
