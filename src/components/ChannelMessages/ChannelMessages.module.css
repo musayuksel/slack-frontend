@@ -1,5 +1,9 @@
 .messagesSection {
-  background-color: aqua;
+  background-color: #efefef;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .messagesContainer {
