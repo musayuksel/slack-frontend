@@ -1,5 +1,6 @@
-import React, { useState, type FC } from 'react';
+import React, { useState, type FC, useContext } from 'react';
 import { HttpMethod, fetchData } from '../../utils';
+import { UserContext } from '../../contexts';
 
 type Props = {
   currentChannelId: string;
@@ -8,12 +9,14 @@ type Props = {
 export const MessageInput: FC<Props> = ({ currentChannelId }) => {
   const [message, setMessage] = useState('');
 
+  const { user } = useContext(UserContext);
+
   const sendMessageToChannel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const messagePayload = {
       content: message,
-      userId: '1', //TODO: get user id from context
+      userId: user?.id,
       channelId: currentChannelId,
       attachment: null,
     };
