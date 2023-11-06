@@ -1,7 +1,8 @@
-import { useState, type FC, useEffect } from 'react';
-import { useSessionStorage } from '../../hooks';
+import { useState, type FC, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IAuthenticateUserWithCognitoArgs, authenticateUserWithCognito } from '../../utils';
+import { useSessionStorage } from '../../hooks';
+import { UserContext } from '../../contexts';
+import { IAuthenticateUserWithCognitoArgs, authenticateUserWithCognito, fetchData } from '../../utils';
 
 export const LoginPage: FC = () => {
   const [userInfos, setUserInfos] = useState<IAuthenticateUserWithCognitoArgs>({
@@ -11,9 +12,11 @@ export const LoginPage: FC = () => {
 
   const [token, setToken] = useSessionStorage({ key: 'token', initialValue: '' });
 
+  const { setUser } = useContext(UserContext);
+
   const navigate = useNavigate();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setUserInfos((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
@@ -27,10 +30,21 @@ export const LoginPage: FC = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      navigate('/dashboard');
-    }
-  }, [token, navigate]);
+    const fetchDataAndSetUser = async () => {
+      try {
+        const response = await fetchData({ url: '/users/me' });
+        const data = await response.json();
+        setUser(data.data);
+        if (token) {
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.log({ error });
+      }
+    };
+
+    fetchDataAndSetUser();
+  }, [token, navigate, setUser]);
 
   return (
     <div>
