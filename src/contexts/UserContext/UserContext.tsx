@@ -1,24 +1,5 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useFetch } from '../../hooks';
-
-interface User {
-  id: string;
-  userName: string;
-  userEmail: string;
-  firstName: string;
-  lastName: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface UserContextValue {
-  user: User | null;
-  setUser: (user: User | null) => void;
-}
-
-interface UserProviderProps {
-  children: ReactNode;
-}
+import React, { createContext, useState } from 'react';
+import { User, UserContextValue, UserProviderProps } from './UserContext.interface';
 
 const UserContext = createContext<UserContextValue>({
   user: null,
@@ -28,12 +9,7 @@ const UserContext = createContext<UserContextValue>({
 export const UserProvider: React.FC<UserProviderProps> = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
-  return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {/* {isLoading ? <div>Loading...</div> : children} */}
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };
 
 export { UserContext };
